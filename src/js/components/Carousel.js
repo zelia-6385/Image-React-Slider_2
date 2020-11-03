@@ -39,9 +39,11 @@ export class Carousel extends PureComponent {
         ].cloneNode(true)
 
         // create empty img for drag and drop effect
-        const img = new Image()
-        img.src =
-            'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
+        // const img = new Image()
+        // img.src =
+        //     'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
+        const img = document.createElement('img')
+        img.src = '../../assets/img/logo1.png'
 
         // initial change state
         this.setState(
@@ -165,36 +167,38 @@ export class Carousel extends PureComponent {
     // method for move slides with swipe and drag and drop effects
     slideShow = change => {
         if (change > 0 && change > this.state.widthCard / 2) {
-            this.setState(
-                {
-                    ...this.state,
-                    change: 0
-                },
-                this.handleNext
-            )
+            this.handleNext()
+            // this.setState(
+            //     {
+            //         ...this.state,
+            //         change: 0
+            //     },
+
+            // )
         } else if (change > 0 && change <= this.state.widthCard / 2) {
             this.setState(
                 {
                     ...this.state,
                     change: 0
                 },
-                this.moveCard(0.5, null)
+                () => this.moveCard(0.5, null)
             )
         } else if (change < 0 && change < -this.state.widthCard / 2) {
-            this.setState(
-                {
-                    ...this.state,
-                    change: 0
-                },
-                this.handlePrevios
-            )
+            this.handlePrevios()
+            // this.setState(
+            //     {
+            //         ...this.state,
+            //         change: 0
+            //     },
+
+            // )
         } else if (change < 0 && change >= -this.state.widthCard / 2) {
             this.setState(
                 {
                     ...this.state,
                     change: 0
                 },
-                this.moveCard(0.5, null)
+                () => this.moveCard(0.5, null)
             )
         }
     }
@@ -207,7 +211,8 @@ export class Carousel extends PureComponent {
             this.setState(
                 {
                     ...this.state,
-                    currentCard: newCurrentCard
+                    currentCard: newCurrentCard,
+                    change: 0
                 },
                 () => {
                     this.moveCard(
@@ -223,7 +228,8 @@ export class Carousel extends PureComponent {
                             this.setState(
                                 {
                                     ...this.state,
-                                    currentCard: 1
+                                    currentCard: 1,
+                                    change: 0
                                 },
                                 () => this.moveCard(0.0, this.state.widthCard)
                             )
@@ -242,7 +248,8 @@ export class Carousel extends PureComponent {
             this.setState(
                 {
                     ...this.state,
-                    currentCard: newCurrentCard
+                    currentCard: newCurrentCard,
+                    change: 0
                 },
                 () => {
                     this.moveCard(
@@ -256,7 +263,8 @@ export class Carousel extends PureComponent {
                                 {
                                     ...this.state,
                                     currentCard:
-                                        this.cardContainer.children.length - 2
+                                        this.cardContainer.children.length - 2,
+                                    change: 0
                                 },
                                 () =>
                                     this.moveCard(
