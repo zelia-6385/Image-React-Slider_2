@@ -1,5 +1,13 @@
 @import 'utils/reset';
 
+* {
+    outline: none !important;
+}
+
+[tabindex='-1']:focus {
+    outline: 0 !important;
+}
+
 html {
     margin: 0;
     width: 100%;
@@ -28,6 +36,37 @@ body {
         }
     }
 
+    &__button {
+        width: 80px;
+        height: 40px;
+        line-height: 40px;
+        background-color: #17a2b8;
+        color: #ffffff;
+        padding: 0px 5px;
+        border-radius: 5px;
+        //---
+        position: relative;
+        display: inline-block;
+        text-decoration: none;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-align: center;
+        vertical-align: middle;
+        overflow: hidden;
+        box-shadow: none;
+        cursor: pointer;
+        transition: all ease-in-out 0.3s;
+
+        &:hover,
+        &:focus {
+            background-image: linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.2),
+                rgba(0, 0, 0, 0.2)
+            );
+        }
+    }
+
     &__view-port {
         position: relative;
         width: 450px;
@@ -41,6 +80,7 @@ body {
         display: flex;
         flex-direction: row;
         width: fit-content;
+        touch-action: pan-x;
     }
 
     &__dots {
