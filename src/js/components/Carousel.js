@@ -169,6 +169,7 @@ export class Carousel extends PureComponent {
             },
             () => {
                 const { change } = this.state // state
+
                 this.slideShow(change)
             }
         )
@@ -183,6 +184,7 @@ export class Carousel extends PureComponent {
             },
             () => {
                 const { widthCard, currentCard } = this.state // state
+
                 this.moveCard(0.0, widthCard * currentCard)
             }
         )
@@ -247,7 +249,10 @@ export class Carousel extends PureComponent {
                             currentCard: 1,
                             change: 0
                         },
-                        () => this.moveCard(0.0, widthCard)
+                        () => {
+                            const { widthCard } = this.state // state
+                            this.moveCard(0.0, widthCard)
+                        }
                     ),
                 502
             )
@@ -285,13 +290,16 @@ export class Carousel extends PureComponent {
                         currentCard: this.cardContainer.children.length - 2,
                         change: 0
                     },
-                    () =>
+                    () => {
+                        const { widthCard } = this.state // state
+
                         this.moveCard(
                             0.0,
                             widthCard * (this.cardContainer.children.length - 2)
                         )
+                    }
                 )
-            }, 504)
+            }, 502)
         }
     }
 
