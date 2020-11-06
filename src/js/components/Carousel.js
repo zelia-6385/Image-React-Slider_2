@@ -316,13 +316,13 @@ export class Carousel extends PureComponent {
 
     // method for change slids by dots
     checkSlide = index => {
-        const { currentCard, widthCard } = this.state // state
-
         this.setState(
             {
                 currentCard: index + 1
             },
             () => {
+                const { currentCard, widthCard } = this.state // state
+
                 this.moveCard(0.5, widthCard * currentCard)
             }
         )
@@ -357,6 +357,7 @@ export class Carousel extends PureComponent {
                         {!this.state.timerIdAuto ? 'Autorun' : 'Stop'}
                     </button>
                 </div>
+                <div className="carousel__title">Unknown masterpieces</div>
                 <div
                     onDragStart={this.handleDragStart}
                     onDragOver={this.handleDragOver}
@@ -375,13 +376,19 @@ export class Carousel extends PureComponent {
                             left: -this.state.change + 'px'
                         }}
                     >
-                        {this.props.images.map(image => (
-                            <Card image={image} key={image} />
+                        {this.props.data.map(dataElem => (
+                            <Card
+                                picture={dataElem.picture}
+                                country={dataElem.country}
+                                author={dataElem.author}
+                                star={dataElem.star}
+                                key={dataElem.id}
+                            />
                         ))}
                     </div>
                 </div>
                 <Dots
-                    slides={this.props.images}
+                    slides={this.props.data}
                     activeIndex={this.state.currentCard - 1}
                     handlerCheckSlide={this.checkSlide}
                 />

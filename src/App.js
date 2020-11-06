@@ -1,10 +1,10 @@
 import React from 'react'
 import Carousel from './js/components/Carousel.js'
 
-function App({ images }) {
+function App({ data }) {
     return (
         <div className="app">
-            <Carousel images={images} />
+            <Carousel data={data} />
         </div>
     )
 }

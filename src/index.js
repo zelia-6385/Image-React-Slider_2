@@ -2,12 +2,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
-import images from './data'
+import data from './data'
 import './assets/scss/app.scss'
 
 ReactDOM.render(
     <React.StrictMode>
-        <App images={images} />
+        <App data={data} />
     </React.StrictMode>,
     document.getElementById('root')
 )

@@ -1,11 +1,15 @@
 @import 'utils/reset';
 
-* {
-    outline: none !important;
-}
+// * {
+//     outline: none !important;
+// }
 
-[tabindex='-1']:focus {
-    outline: 0 !important;
+// [tabindex='-1']:focus {
+//     outline: 0 !important;
+// }
+
+button:focus {
+    outline: none;
 }
 
 html {
@@ -67,6 +71,11 @@ body {
         }
     }
 
+    &__title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
     &__view-port {
         position: relative;
         width: 450px;
@@ -113,21 +122,53 @@ body {
     width: 450px;
     height: 300px;
     box-sizing: border-box;
-    font-size: 2.5em;
-    color: white;
+    font-size: 1.2em;
+    padding: 10px;
+    background-color: white;
+    border-left: 1px solid #e7e7e7;
+    border-right: 1px solid #e7e7e7;
+
+    &__details {
+        margin-top: 10px;
+        p {
+            margin-top: 10px;
+        }
+    }
 
     &__image {
-        width: 100%;
-        height: 100%;
+        height: 60%;
+        border-radius: 5px;
     }
-}
 
-.drag-icon {
-    display: none;
+    &__star {
+        line-height: 0;
+    }
+
+    &__icon-star {
+        display: inline-block;
+        line-height: 0;
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+    }
+
+    &__text-star {
+        display: inline-block;
+        vertical-align: middle;
+    }
 }
 
 @media (max-width: 576px) {
     .carousel {
+        &__controls {
+            margin: 10px 0;
+        }
+
+        &__title {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+
         &__view-port {
             width: 300px;
             height: 180px;
@@ -141,5 +182,13 @@ body {
     .card {
         width: 300px;
         height: 180px;
+        font-size: 1em;
+
+        &__details {
+            margin-top: 5px;
+            p {
+                margin-top: 5px;
+            }
+        }
     }
 }
