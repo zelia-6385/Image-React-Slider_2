@@ -137,17 +137,26 @@ export class Carousel extends PureComponent {
     }
 
     handleTouchMove = e => {
-        const touchStart = new Event('touchend')
-        const { widthCard } = this.state // state
+        const { currentCard, widthCard } = this.state // state
 
         // e.preventDefault()
         e.stopPropagation()
 
+        // let moveRight = currentCard === 1 ? widthCard : widthCard * currentCard
+        // let moveLeft =
+        //     currentCard === this.cardContainer.children.length - 2
+        //         ? 0
+        //         : (this.cardContainer.children.length - currentCard - 1) *
+        //               widthCard -
+        //           widthCard
+
         if (
-            e.targetTouches[0].clientX + 300 <= 0 ||
-            e.targetTouches[0].clientX > widthCard + 300
+            // -e.targetTouches[0].clientX >= moveLeft ||
+            // e.targetTouches[0].clientX > moveRight
+            e.targetTouches[0].clientX <= 0 ||
+            e.targetTouches[0].clientX > widthCard
         ) {
-            this.viewPort.dispatchEvent(touchStart)
+            this.handleTouchEnd()
         }
 
         this.setState({
