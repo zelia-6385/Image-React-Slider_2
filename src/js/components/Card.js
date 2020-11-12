@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 function Card({ picture, country, author, star }) {
     return (
-        <div className="card">
+        <>
             <img className="card__image" src={picture} alt="picture" />
             <div className="card__details">
                 <p className="card__homeland">Country: {country}</p>
@@ -15,7 +15,7 @@ function Card({ picture, country, author, star }) {
                     <span className="card__text-star">{star}</span>
                 </p>
             </div>
-        </div>
+        </>
     )
 }
 

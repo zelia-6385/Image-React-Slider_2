@@ -339,6 +339,12 @@ export class Carousel extends PureComponent {
 
     render() {
         const { currentCard, timerIdAuto, change } = this.state
+
+        const childrenArr = React.Children.toArray(this.props.children)
+        const children = childrenArr.map(child => (
+            <div className="card">{child}</div>
+        ))
+
         return (
             <div className="carousel">
                 <div className="carousel__controls">
@@ -380,11 +386,11 @@ export class Carousel extends PureComponent {
                             left: -change + 'px'
                         }}
                     >
-                        {this.props.children}
+                        {children}
                     </div>
                 </div>
                 <Dots
-                    cardsId={this.props.cardsId}
+                    cardsId={childrenArr}
                     activeIndex={currentCard - 1}
                     handlerCheckSlide={this.checkSlide}
                 />
