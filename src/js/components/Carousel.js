@@ -341,8 +341,10 @@ export class Carousel extends PureComponent {
         const { currentCard, timerIdAuto, change } = this.state
 
         const childrenArr = React.Children.toArray(this.props.children)
-        const children = childrenArr.map(child => (
-            <div className="card">{child}</div>
+        const children = childrenArr.map((child, i) => (
+            <div className="card" key={i}>
+                {child}
+            </div>
         ))
 
         return (

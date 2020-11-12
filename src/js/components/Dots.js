@@ -1,18 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Dots = ({ cardsId, activeIndex, handlerCheckSlide }) => (
-    <div className="carousel__dots">
-        {cardsId.map((card, i) => (
-            <Dot
-                key={card}
-                activeIndex={activeIndex}
-                index={i}
-                handlerCheckSlide={handlerCheckSlide}
-            />
-        ))}
-    </div>
-)
+const Dots = ({ cardsId, activeIndex, handlerCheckSlide }) => {
+    return (
+        <div className="carousel__dots">
+            {cardsId.map((card, i) => (
+                <Dot
+                    key={i}
+                    activeIndex={activeIndex}
+                    index={i}
+                    handlerCheckSlide={handlerCheckSlide}
+                />
+            ))}
+        </div>
+    )
+}
 
 const Dot = React.memo(function Dot({ activeIndex, index, handlerCheckSlide }) {
     return (
