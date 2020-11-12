@@ -1,13 +1,5 @@
 @import 'utils/reset';
 
-// * {
-//     outline: none !important;
-// }
-
-// [tabindex='-1']:focus {
-//     outline: 0 !important;
-// }
-
 button:focus {
     outline: none;
 }
@@ -28,9 +20,8 @@ body {
 
 .carousel {
     position: absolute;
-    top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 0);
 
     &__controls {
         margin: 20px 0;
@@ -48,7 +39,6 @@ body {
         color: #ffffff;
         padding: 0px 5px;
         border-radius: 5px;
-        //---
         position: relative;
         display: inline-block;
         text-decoration: none;
@@ -77,15 +67,13 @@ body {
     }
 
     &__view-port {
-        position: relative;
         width: 450px;
-        height: 300px;
         overflow: hidden;
         border-radius: 10px;
     }
 
     &__card-container {
-        position: absolute;
+        position: relative;
         display: flex;
         flex-direction: row;
         width: fit-content;
@@ -120,7 +108,7 @@ body {
 
 .card {
     width: 450px;
-    height: 300px;
+    height: 100%;
     box-sizing: border-box;
     font-size: 1.2em;
     padding: 10px;
@@ -136,7 +124,7 @@ body {
     }
 
     &__image {
-        height: 60%;
+        height: 200px;
         border-radius: 5px;
     }
 
@@ -171,7 +159,7 @@ body {
 
         &__view-port {
             width: 300px;
-            height: 180px;
+            // height: 180px;
         }
 
         &__dot {
@@ -181,8 +169,12 @@ body {
 
     .card {
         width: 300px;
-        height: 180px;
+        // height: 180px;
         font-size: 1em;
+
+        &__image {
+            height: 150px;
+        }
 
         &__details {
             margin-top: 5px;

@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Dots = ({ slides, activeIndex, handlerCheckSlide }) => (
+const Dots = ({ cardsId, activeIndex, handlerCheckSlide }) => (
     <div className="carousel__dots">
-        {slides.map((slide, i) => (
+        {cardsId.map((card, i) => (
             <Dot
-                key={slide.id}
+                key={card}
                 activeIndex={activeIndex}
                 index={i}
                 handlerCheckSlide={handlerCheckSlide}
