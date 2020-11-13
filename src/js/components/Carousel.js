@@ -3,402 +3,420 @@ import PropTypes from 'prop-types'
 import Dots from './Dots'
 
 export class Carousel extends PureComponent {
-    constructor(props) {
-        super(props)
+  constructor(props) {
+    super(props)
 
-        // initial state
-        this.state = {
-            currentCard: 1,
-            widthCard: null,
-            timerIdAuto: null,
-            timerId: null,
-            start: 0,
-            change: 0,
-            touch: 0
-        }
-
-        // refereces
-        this.setCardContainer = element => {
-            this.cardContainer = element
-        }
-
-        this.setViewPort = element => {
-            this.viewPort = element
-        }
-
-        this.handleTouchMove.passive = false
-
-        this.img = new Image()
+    // initial state
+    this.state = {
+      currentCard: 1,
+      widthCard: null,
+      timerIdAuto: null,
+      timerId: null,
+      start: 0,
+      change: 0,
+      touch: 0,
+      next: false,
+      previos: false
     }
 
-    static propTypes = {
-        images: PropTypes.arrayOf(PropTypes.string.isRequired)
+    // refereces
+    this.setCardContainer = element => {
+      this.cardContainer = element
     }
 
-    componentDidMount() {
-        // creating fake cards
-        const firstCardClone = this.cardContainer.children[0].cloneNode(true)
-        const lastCardClone = this.cardContainer.children[
-            this.cardContainer.children.length - 1
-        ].cloneNode(true)
-
-        this.img.src =
-            'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
-
-        // initial change state
-        this.setState(
-            {
-                ...this.state,
-                widthCard: this.cardContainer.children[0].offsetWidth
-            },
-            () => {
-                const { widthCard } = this.state
-
-                this.cardContainer.insertBefore(
-                    lastCardClone,
-                    this.cardContainer.children[0]
-                )
-                this.cardContainer.append(firstCardClone)
-                this.moveCard(0.0, widthCard)
-            }
-        )
-
-        // add event listener for resize
-        window.addEventListener('resize', this.resizeWidth)
+    this.setViewPort = element => {
+      this.viewPort = element
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.resizeWidth)
-    }
+    this.handleTouchMove.passive = false
 
-    // event handlers
-    handleDragStart = e => {
-        e.dataTransfer.setDragImage(this.img, -10, -10)
-        this.setState({
-            ...this.state,
-            timerId: setInterval(() => {
-                const { start, touch } = this.state
+    this.img = new Image()
+  }
 
-                this.setState({
-                    ...this.state,
-                    change: start - touch
-                })
-            }, 40),
-            start: e.clientX
-        })
-    }
+  static propTypes = {
+    images: PropTypes.arrayOf(PropTypes.string.isRequired)
+  }
 
-    handleDragOver = e => {
-        e.preventDefault()
+  componentDidMount() {
+    // creating fake cards
+    const firstCardClone = this.cardContainer.children[0].cloneNode(true)
+    const lastCardClone = this.cardContainer.children[
+      this.cardContainer.children.length - 1
+    ].cloneNode(true)
 
-        this.setState({
-            ...this.state,
-            touch: e.clientX
-        })
-    }
+    this.img.src =
+      'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
 
-    handleDragEnd = () => {
-        const { timerId } = this.state
-
-        clearInterval(timerId)
-        this.setState(
-            {
-                ...this.state,
-                timerId: null,
-                touch: 0,
-                start: 0
-            },
-            () => {
-                const { change } = this.state
-
-                this.slideShow(change)
-            }
-        )
-    }
-
-    handleTouchStart = e => {
-        this.setState({
-            ...this.state,
-            timerId: setInterval(() => {
-                const { start, touch } = this.state
-
-                let moveFinger = touch ? touch : start
-                this.setState({
-                    ...this.state,
-                    change: start - moveFinger
-                })
-            }, 60),
-            start: e.touches[0].clientX
-        })
-    }
-
-    handleTouchMove = e => {
-        const { currentCard, widthCard } = this.state
-
-        // e.preventDefault()
-        e.stopPropagation()
-
-        if (
-            e.targetTouches[0].clientX <= 0 ||
-            e.targetTouches[0].clientX > widthCard
-        ) {
-            this.handleTouchEnd()
-        }
-
-        this.setState({
-            ...this.state,
-            touch: e.touches[0].clientX
-        })
-    }
-
-    handleTouchEnd = () => {
-        const { timerId } = this.state
-
-        clearInterval(timerId)
-        this.setState(
-            {
-                ...this.state,
-                timerId: null,
-                touch: 0,
-                start: 0
-            },
-            () => {
-                const { change } = this.state
-
-                this.slideShow(change)
-            }
-        )
-    }
-
-    // method for adaptive change slider
-    resizeWidth = () => {
-        this.setState(
-            {
-                ...this.state,
-                widthCard: this.cardContainer.children[0].offsetWidth
-            },
-            () => {
-                const { widthCard, currentCard } = this.state
-
-                this.moveCard(0.0, widthCard * currentCard)
-            }
-        )
-    }
-
-    // method for move slides with swipe and drag and drop effects
-    slideShow = change => {
+    // initial change state
+    this.setState(
+      {
+        ...this.state,
+        widthCard: this.cardContainer.children[0].offsetWidth
+      },
+      () => {
         const { widthCard } = this.state
 
-        if (change > 0 && change > widthCard / 2) {
-            this.handleNext()
-        } else if (change > 0 && change <= widthCard / 2) {
-            this.setState(
-                {
-                    ...this.state,
-                    change: 0
-                },
-                () => this.moveCard(0.5, null)
-            )
-        } else if (change < 0 && change < -widthCard / 2) {
-            this.handlePrevios()
-        } else if (change < 0 && change >= -widthCard / 2) {
-            this.setState(
-                {
-                    ...this.state,
-                    change: 0
-                },
-                () => this.moveCard(0.5, null)
-            )
-        }
+        this.cardContainer.insertBefore(
+          lastCardClone,
+          this.cardContainer.children[0]
+        )
+        this.cardContainer.append(firstCardClone)
+        this.moveCard({
+          transitionDuration: 0.0,
+          transform: widthCard
+        })
+      }
+    )
+
+    // add event listener for resize
+    window.addEventListener('resize', this.resizeWidth)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeWidth)
+  }
+
+  // event handlers
+  handleDragStart = e => {
+    e.dataTransfer.setDragImage(this.img, -10, -10)
+    this.setState({
+      ...this.state,
+      timerId: setInterval(() => {
+        const { start, touch } = this.state
+
+        this.setState({
+          ...this.state,
+          change: start - touch
+        })
+      }, 40),
+      start: e.clientX
+    })
+  }
+
+  handleDragOver = e => {
+    e.preventDefault()
+
+    this.setState({
+      ...this.state,
+      touch: e.clientX
+    })
+  }
+
+  handleDragEnd = () => {
+    const { timerId } = this.state
+
+    clearInterval(timerId)
+    this.setState(
+      {
+        ...this.state,
+        timerId: null,
+        touch: 0,
+        start: 0
+      },
+      () => {
+        const { change } = this.state
+
+        this.slideShow(change)
+      }
+    )
+  }
+
+  handleTouchStart = e => {
+    this.setState({
+      ...this.state,
+      timerId: setInterval(() => {
+        const { start, touch } = this.state
+
+        let moveFinger = touch ? touch : start
+        this.setState({
+          ...this.state,
+          change: start - moveFinger
+        })
+      }, 60),
+      start: e.touches[0].clientX
+    })
+  }
+
+  handleTouchMove = e => {
+    const { currentCard, widthCard } = this.state
+
+    // e.preventDefault()
+    e.stopPropagation()
+
+    if (
+      e.targetTouches[0].clientX <= 0 ||
+      e.targetTouches[0].clientX > widthCard
+    ) {
+      this.handleTouchEnd()
     }
 
-    // move to the next slide
-    handleNext = () => {
-        const { currentCard } = this.state
+    this.setState({
+      ...this.state,
+      touch: e.touches[0].clientX
+    })
+  }
 
-        if (currentCard < this.cardContainer.children.length - 1) {
-            let newCurrentCard = currentCard + 1
+  handleTouchEnd = () => {
+    const { timerId } = this.state
 
-            this.setState(
-                {
-                    ...this.state,
-                    currentCard: newCurrentCard,
-                    change: 0
-                },
-                this.handleNextMoveCard
-            )
-        }
-    }
+    clearInterval(timerId)
+    this.setState(
+      {
+        ...this.state,
+        timerId: null,
+        touch: 0,
+        start: 0
+      },
+      () => {
+        const { change } = this.state
 
-    handleNextMoveCard = () => {
+        this.slideShow(change)
+      }
+    )
+  }
+
+  // method for adaptive change slider
+  resizeWidth = () => {
+    this.setState(
+      {
+        ...this.state,
+        widthCard: this.cardContainer.children[0].offsetWidth
+      },
+      () => {
         const { widthCard, currentCard } = this.state
 
-        this.moveCard(0.5, widthCard * currentCard)
+        this.moveCard({
+          transitionDuration: 0.0,
+          transform: widthCard * currentCard
+        })
+      }
+    )
+  }
 
-        if (currentCard === this.cardContainer.children.length - 1) {
-            setTimeout(
-                () =>
-                    this.setState(
-                        {
-                            ...this.state,
-                            currentCard: 1,
-                            change: 0
-                        },
-                        () => {
-                            const { widthCard } = this.state
-                            this.moveCard(0.0, widthCard)
-                        }
-                    ),
-                502
-            )
-        }
+  // method for move slides with swipe and drag and drop effects
+  slideShow = change => {
+    const { widthCard } = this.state
+
+    if (change > 0 && change > widthCard / 2) {
+      this.handleNext()
+    } else if (change > 0 && change <= widthCard / 2) {
+      this.setState(
+        {
+          ...this.state,
+          change: 0
+        },
+        () => this.moveCard(0.5, null)
+      )
+    } else if (change < 0 && change < -widthCard / 2) {
+      this.handlePrevios()
+    } else if (change < 0 && change >= -widthCard / 2) {
+      this.setState(
+        {
+          ...this.state,
+          change: 0
+        },
+        () =>
+          this.moveCard({
+            transitionDuration: 0.5,
+            transform: null
+          })
+      )
+    }
+  }
+
+  // move to the next slide
+  handleNext = () => {
+    const { currentCard, next } = this.state
+    let newCurrentCard = currentCard + 1
+
+    if (!next) {
+      this.setState(
+        {
+          ...this.state,
+          currentCard: newCurrentCard,
+          change: 0,
+          previos: false,
+          next: true
+        },
+        this.handleMoveCard
+      )
+    } else {
+      this.setState(
+        {
+          ...this.state,
+          currentCard: newCurrentCard,
+          change: 0
+        },
+        this.handleMoveCard
+      )
+    }
+  }
+
+  // move to the previos slide
+  handlePrevios = () => {
+    const { currentCard, previos } = this.state
+    let newCurrentCard = currentCard - 1
+    if (!previos) {
+      this.setState(
+        {
+          ...this.state,
+          currentCard: newCurrentCard,
+          change: 0,
+          previos: true,
+          next: false
+        },
+        this.handleMoveCard
+      )
+    } else {
+      this.setState(
+        {
+          ...this.state,
+          currentCard: newCurrentCard,
+          change: 0
+        },
+        this.handleMoveCard
+      )
+    }
+  }
+
+  // callback for move card
+  handleMoveCard = () => {
+    const { widthCard, currentCard, next, previos } = this.state
+
+    const cardArrayLength = this.cardContainer.children.length
+
+    this.moveCard({
+      transitionDuration: 0.5,
+      transform: widthCard * currentCard
+    })
+
+    if (next && currentCard === cardArrayLength - 1) {
+      this.moveCardDeferredСall(1, () => {
+        this.moveCard({
+          transitionDuration: 0.0,
+          transform: widthCard
+        })
+      })
     }
 
-    // move to the previos slide
-    handlePrevios = () => {
-        const { currentCard } = this.state
-
-        if (this.state.currentCard > 0) {
-            let newCurrentCard = currentCard - 1
-
-            this.setState(
-                {
-                    ...this.state,
-                    currentCard: newCurrentCard,
-                    change: 0
-                },
-                this.handlePreviosMoveCard
-            )
-        }
+    if (previos && currentCard === 0) {
+      this.moveCardDeferredСall(cardArrayLength - 2, () => {
+        this.moveCard({
+          transitionDuration: 0.0,
+          transform: widthCard * (cardArrayLength - 2)
+        })
+      })
     }
+  }
 
-    handlePreviosMoveCard = () => {
-        const { widthCard, currentCard } = this.state
+  moveCardDeferredСall = (currentCard, callback) => {
+    setTimeout(() => {
+      this.setState(
+        {
+          ...this.state,
+          currentCard: currentCard,
+          change: 0
+        },
+        callback
+      )
+    }, 502)
+  }
 
-        this.moveCard(0.5, widthCard * currentCard)
+  // method for run and stop autorun
+  handleAutorun = () => {
+    const { timerIdAuto } = this.state
 
-        if (currentCard === 0) {
-            setTimeout(() => {
-                this.setState(
-                    {
-                        ...this.state,
-                        currentCard: this.cardContainer.children.length - 2,
-                        change: 0
-                    },
-                    () => {
-                        const { widthCard } = this.state
+    if (!timerIdAuto) {
+      this.setState({
+        ...this.state,
+        timerIdAuto: setInterval(this.handleNext, 2000)
+      })
+    } else {
+      clearInterval(timerIdAuto)
 
-                        this.moveCard(
-                            0.0,
-                            widthCard * (this.cardContainer.children.length - 2)
-                        )
-                    }
-                )
-            }, 502)
-        }
+      this.setState({
+        ...this.state,
+        timerIdAuto: null
+      })
     }
+  }
 
-    // method for run and stop autorun
-    handleAutorun = () => {
-        const { timerIdAuto } = this.state
+  // method for change slids by dots
+  checkSlide = index => {
+    this.setState(
+      {
+        currentCard: index + 1
+      },
+      () => {
+        const { currentCard, widthCard } = this.state
 
-        if (!timerIdAuto) {
-            this.setState({
-                ...this.state,
-                timerIdAuto: setInterval(this.handleNext, 2000)
-            })
-        } else {
-            clearInterval(timerIdAuto)
+        this.moveCard({
+          transitionDuration: 0.5,
+          transform: widthCard * currentCard
+        })
+      }
+    )
+  }
 
-            this.setState({
-                ...this.state,
-                timerIdAuto: null
-            })
-        }
-    }
+  // method for change transform / transition css props
+  moveCard = ({ transitionDuration, transform }) => {
+    this.cardContainer.style.transitionDuration = `${transitionDuration}s`
+    this.cardContainer.style.transform = `translate(-${transform}px)`
+  }
 
-    // method for change slids by dots
-    checkSlide = index => {
-        this.setState(
-            {
-                currentCard: index + 1
-            },
-            () => {
-                const { currentCard, widthCard } = this.state
+  render() {
+    const { currentCard, timerIdAuto, change } = this.state
 
-                this.moveCard(0.5, widthCard * currentCard)
-            }
-        )
-    }
+    const childrenArr = React.Children.toArray(this.props.children)
+    const children = childrenArr.map((child, i) => (
+      <div className="card" key={i}>
+        {child}
+      </div>
+    ))
 
-    // method for change transform / transition css props
-    moveCard = (transitionDuration, transform) => {
-        this.cardContainer.style.transitionDuration = `${transitionDuration}s`
-        this.cardContainer.style.transform = `translate(-${transform}px)`
-    }
-
-    render() {
-        const { currentCard, timerIdAuto, change } = this.state
-
-        const childrenArr = React.Children.toArray(this.props.children)
-        const children = childrenArr.map((child, i) => (
-            <div className="card" key={i}>
-                {child}
-            </div>
-        ))
-
-        return (
-            <div className="carousel">
-                <div className="carousel__controls">
-                    <button
-                        onClick={this.handlePrevios}
-                        className="carousel__button"
-                    >
-                        Previous
-                    </button>
-                    <button
-                        onClick={this.handleNext}
-                        className="carousel__button"
-                    >
-                        Next
-                    </button>
-                    <button
-                        onClick={this.handleAutorun}
-                        className="carousel__button"
-                    >
-                        {!timerIdAuto ? 'Autorun' : 'Stop'}
-                    </button>
-                </div>
-                <div className="carousel__title">Unknown masterpieces</div>
-                <div
-                    onDragStart={this.handleDragStart}
-                    onDragOver={this.handleDragOver}
-                    onDragEnd={this.handleDragEnd}
-                    onTouchStart={this.handleTouchStart}
-                    onTouchMove={this.handleTouchMove}
-                    onTouchEnd={this.handleTouchEnd}
-                    className="carousel__view-port"
-                    ref={this.setViewPort}
-                >
-                    <div
-                        draggable="true"
-                        ref={this.setCardContainer}
-                        className="carousel__card-container"
-                        style={{
-                            left: -change + 'px'
-                        }}
-                    >
-                        {children}
-                    </div>
-                </div>
-                <Dots
-                    cardsId={childrenArr}
-                    activeIndex={currentCard - 1}
-                    handlerCheckSlide={this.checkSlide}
-                />
-            </div>
-        )
-    }
+    return (
+      <div className="carousel">
+        <div className="carousel__controls">
+          <button onClick={this.handlePrevios} className="carousel__button">
+            Previous
+          </button>
+          <button onClick={this.handleNext} className="carousel__button">
+            Next
+          </button>
+          <button onClick={this.handleAutorun} className="carousel__button">
+            {!timerIdAuto ? 'Autorun' : 'Stop'}
+          </button>
+        </div>
+        <div className="carousel__title">Unknown masterpieces</div>
+        <div
+          onDragStart={this.handleDragStart}
+          onDragOver={this.handleDragOver}
+          onDragEnd={this.handleDragEnd}
+          onTouchStart={this.handleTouchStart}
+          onTouchMove={this.handleTouchMove}
+          onTouchEnd={this.handleTouchEnd}
+          className="carousel__view-port"
+          ref={this.setViewPort}
+        >
+          <div
+            draggable="true"
+            ref={this.setCardContainer}
+            className="carousel__card-container"
+            style={{
+              left: -change + 'px'
+            }}
+          >
+            {children}
+          </div>
+        </div>
+        <Dots
+          cardsId={childrenArr}
+          activeIndex={currentCard - 1}
+          handlerCheckSlide={this.checkSlide}
+        />
+      </div>
+    )
+  }
 }
 
 export default Carousel
