@@ -205,7 +205,11 @@ export class Carousel extends PureComponent {
           ...this.state,
           change: 0
         },
-        () => this.moveCard(0.5, null)
+        () =>
+          this.moveCard({
+            transitionDuration: 0.5,
+            transform: null
+          })
       )
     } else if (change < 0 && change < -widthCard / 2) {
       this.handlePrevios()
