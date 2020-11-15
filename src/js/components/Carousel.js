@@ -11,6 +11,7 @@ export class Carousel extends PureComponent {
     this.state = {
       currentCard: 1,
       widthCard: null,
+      heightCard: null,
       timerIdAuto: null,
       timerId: null,
       start: 0,
@@ -34,17 +35,16 @@ export class Carousel extends PureComponent {
     this.img = new Image()
 
     this.childrenArr = React.Children.toArray(this.props.children)
-
-    this.children = this.childrenArr.map((child, i) => (
-      <div className="card" key={i}>
-        {child}
-      </div>
-    ))
   }
 
   componentDidMount() {
     this.img.src =
       'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
+
+    const widthWindow = document.body.clientWidth - 20
+
+    const resultWidthCard =
+      widthWindow > this.props.width ? this.props.width : widthWindow
 
     if (this.childrenArr.length > 1) {
       // creating fake cards
@@ -54,13 +54,18 @@ export class Carousel extends PureComponent {
       ].cloneNode(true)
 
       // initial change state
+
       this.setState(
         {
           ...this.state,
-          widthCard: this.cardContainer.children[0].offsetWidth
+          widthCard: resultWidthCard,
+          heightCard: this.props.height
         },
         () => {
           const { widthCard } = this.state
+
+          lastCardClone.style.width = widthCard + 'px'
+          firstCardClone.style.width = widthCard + 'px'
 
           this.cardContainer.insertBefore(
             lastCardClone,
@@ -77,16 +82,27 @@ export class Carousel extends PureComponent {
       // initial change state
       this.setState({
         ...this.state,
-        widthCard: this.cardContainer.children[0].offsetWidth
+        widthCard: resultWidthCard,
+        heightCard: this.props.height
       })
     }
 
     // add event listener for resize
-    window.addEventListener('resize', this.resizeWidth)
+    const debounce = (func, delay) => {
+      let inDebounce
+      return function () {
+        const context = this
+        const args = arguments
+        clearTimeout(inDebounce)
+        inDebounce = setTimeout(() => func.apply(context, args), delay)
+      }
+    }
+
+    window.addEventListener('resize', debounce(this.resizeWidth, 12))
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.resizeWidth)
+    window.removeEventListener('resize', debounce(this.resizeWidth, 12))
   }
 
   // event handlers
@@ -199,26 +215,56 @@ export class Carousel extends PureComponent {
 
   // method for adaptive change slider
   resizeWidth = () => {
-    if (this.childrenArr.length <= 1) {
-      this.setState({
-        ...this.state,
-        widthCard: this.cardContainer.children[0].offsetWidth
-      })
-    } else {
+    const { width } = this.props
+    const widthWindow = document.body.clientWidth - 20
+
+    const firstCard = this.cardContainer.children[0]
+    const lastCard = this.cardContainer.children[
+      this.cardContainer.children.length - 1
+    ]
+
+    const setWidthCard = (payload, callback) => {
       this.setState(
         {
           ...this.state,
-          widthCard: this.cardContainer.children[0].offsetWidth
+          widthCard: payload
         },
-        () => {
+        callback
+      )
+    }
+
+    if (this.childrenArr.length <= 1) {
+      if (widthWindow > width) {
+        setWidthCard(width, null)
+      } else {
+        setWidthCard(widthWindow, null)
+      }
+    } else {
+      if (widthWindow > width) {
+        setWidthCard(width, () => {
           const { widthCard, currentCard } = this.state
+
+          firstCard.style.width = widthCard + 'px'
+          lastCard.style.width = widthCard + 'px'
 
           this.moveCard({
             transitionDuration: 0.0,
             transform: widthCard * currentCard
           })
-        }
-      )
+        })
+      } else {
+        setWidthCard(widthWindow, () => {
+          const { widthCard, currentCard } = this.state
+
+          firstCard.style.width = widthCard + 'px'
+          lastCard.style.width = widthCard + 'px'
+
+          this.moveCard({
+            transitionDuration: 0.0,
+            transform: widthCard * currentCard
+          })
+        })
+      }
     }
   }
 
@@ -398,7 +444,26 @@ export class Carousel extends PureComponent {
   }
 
   render() {
-    const { currentCard, timerIdAuto, change } = this.state
+    const {
+      currentCard,
+      widthCard,
+      heightCard,
+      timerIdAuto,
+      change
+    } = this.state
+
+    const children = this.childrenArr.map((child, i) => (
+      <div
+        className="card"
+        key={i}
+        style={{
+          width: `${widthCard}px`,
+          height: `${heightCard}px`
+        }}
+      >
+        {child}
+      </div>
+    ))
 
     return (
       <div className="carousel">
@@ -425,6 +490,7 @@ export class Carousel extends PureComponent {
           onTouchEnd={this.handleTouchEnd}
           className="carousel__view-port"
           ref={this.setViewPort}
+          style={{ width: `${widthCard}px`, height: `${heightCard}px` }}
         >
           <div
             draggable="true"
@@ -434,7 +500,11 @@ export class Carousel extends PureComponent {
               left: -change + 'px'
             }}
           >
-            {this.childrenArr.length ? this.children : <EmptyCarousel />}
+            {this.childrenArr.length ? (
+              children
+            ) : (
+              <EmptyCarousel widthCard={widthCard} heightCard={heightCard} />
+            )}
           </div>
         </div>
         {this.childrenArr.length > 1 && (

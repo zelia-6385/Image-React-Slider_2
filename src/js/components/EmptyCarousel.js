@@ -1,8 +1,14 @@
 import React from 'react'
 
-function EmptyCarousel() {
+function EmptyCarousel({ widthCard, heightCard }) {
   return (
-    <div className="card" style={{ height: '250px' }}>
+    <div
+      className="card"
+      style={{
+        width: `${widthCard}px`,
+        height: `${heightCard}px`
+      }}
+    >
       No content
     </div>
   )
