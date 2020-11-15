@@ -37,6 +37,16 @@ export class Carousel extends PureComponent {
     this.childrenArr = React.Children.toArray(this.props.children)
   }
 
+  static propTypes = {
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired
+  }
+
+  static defaultProps = {
+    width: 450,
+    height: 300
+  }
+
   componentDidMount() {
     this.img.src =
       'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
@@ -54,7 +64,6 @@ export class Carousel extends PureComponent {
       ].cloneNode(true)
 
       // initial change state
-
       this.setState(
         {
           ...this.state,
@@ -452,6 +461,7 @@ export class Carousel extends PureComponent {
       change
     } = this.state
 
+    // make children array
     const children = this.childrenArr.map((child, i) => (
       <div
         className="card"
